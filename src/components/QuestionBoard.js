@@ -1,17 +1,14 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import './QuestionBoard.css'
-
+import './QuestionBoard.css';
 let incorrectIdx = 0;
-
 export default class QuestionBoard extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = ({
       borderEnable: false,
-    })
-
+    });
   }
 
   createTestId = (answer, correctAnswer) => {
@@ -24,14 +21,14 @@ export default class QuestionBoard extends Component {
   activeBorder = () => {
     this.setState({
       borderEnable: true,
-    })
+    });
   }
 
   createClass = (testId) => {
-    const { borderEnable } = this.state
+    const { borderEnable } = this.state;
     const border = borderEnable ? 'border' : '';
     const colorBorder = testId === 'correct-answer' ? 'colorGreen' : 'colorRed';
-    return border + ' ' + colorBorder;
+    return `${border} ${colorBorder}`;
   }
 
   createButtons = (answers, correctAnswer) => {
@@ -40,19 +37,20 @@ export default class QuestionBoard extends Component {
       answers
         .sort(() => Math.random() - randomNumber)
         .map((answer, idx) => {
-          const testId = this.createTestId(answer, correctAnswer)
+          const testId = this.createTestId(answer, correctAnswer);
           return (
             <button
               data-testid={ testId }
               key={ idx }
               type="button"
-              className={this.createClass(testId)}
+              className={ this.createClass(testId) }
               name={ testId }
-              onClick={this.activeBorder}
+              onClick={ this.activeBorder }
             >
               { answer }
             </button>
-        )})
+          );
+        })
     );
   }
 
