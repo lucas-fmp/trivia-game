@@ -53,22 +53,25 @@ export default class QuestionBoard extends Component {
     const { selectAnswer } = this.props;
     return (
       answers
-        .map((answer, idx) => (
-          <button
-            data-testid={ this.createTestId(answer, correctAnswer) }
-            key={ idx }
-            type="button"
-            className={ this.createClass(testId) }
-            disabled={ buttonState }
-            name={ testId }
-            onClick={ () => {
-              this.activeBorder();
-              selectAnswer(answer);
-            } }
-          >
-            { answer }
-          </button>
-        ))
+        .map((answer, idx) => {
+          const testId = this.createTestId(answer, correctAnswer);
+          return (
+            <button
+              data-testid={ testId }
+              key={ idx }
+              type="button"
+              className={ this.createClass(testId) }
+              disabled={ buttonState }
+              name={ testId }
+              onClick={ () => {
+                this.activeBorder();
+                selectAnswer(answer);
+              } }
+            >
+              { answer }
+            </button>
+          );
+        })
     );
   }
 
