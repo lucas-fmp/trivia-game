@@ -1,14 +1,37 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import './QuestionBoard.css'
 
 let incorrectIdx = 0;
 
 export default class QuestionBoard extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = ({
+      borderEnable: false,
+    })
+
+  }
+
   createTestId = (answer, correctAnswer) => {
     const testId = answer === correctAnswer
       ? 'correct-answer' : `wrong-answer-${incorrectIdx}`;
-    incorrectIdx = answer !== correctAnswer ? incorrectIdx += 1 : incorrectIdx;
+    incorrectIdx = answer !== correctAnswer ? incorrectIdx + 1 : incorrectIdx;
     return testId;
+  }
+
+  activeBorder = () => {
+    this.setState({
+      borderEnable: true,
+    })
+  }
+
+  createClass = (testId) => {
+    const { borderEnable } = this.state
+    const border = borderEnable ? 'border' : '';
+    const colorBorder = testId === 'correct-answer' ? 'colorGreen' : 'colorRed';
+    return border + ' ' + colorBorder;
   }
 
   createButtons = (answers, correctAnswer) => {
@@ -16,15 +39,20 @@ export default class QuestionBoard extends Component {
     return (
       answers
         .sort(() => Math.random() - randomNumber)
-        .map((answer, idx) => (
-          <button
-            data-testid={ this.createTestId(answer, correctAnswer) }
-            key={ idx }
-            type="button"
-          >
-            { answer }
-          </button>
-        ))
+        .map((answer, idx) => {
+          const testId = this.createTestId(answer, correctAnswer)
+          return (
+            <button
+              data-testid={ testId }
+              key={ idx }
+              type="button"
+              className={this.createClass(testId)}
+              name={ testId }
+              onClick={this.activeBorder}
+            >
+              { answer }
+            </button>
+        )})
     );
   }
 
