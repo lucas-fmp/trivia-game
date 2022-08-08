@@ -25,7 +25,7 @@ export default class QuestionBoard extends Component {
   createTestId = (answer, correctAnswer) => {
     const testId = answer === correctAnswer
       ? 'correct-answer' : `wrong-answer-${incorrectIdx}`;
-    incorrectIdx = answer !== correctAnswer ? incorrectIdx += 1 : incorrectIdx;
+    incorrectIdx = answer !== correctAnswer ? incorrectIdx + 1 : incorrectIdx;
     return testId;
   }
 
@@ -36,6 +36,7 @@ export default class QuestionBoard extends Component {
 
   createButtons = (answers, correctAnswer) => {
     const { buttonState } = this.state;
+    const { selectAnswer } = this.props;
     return (
       answers
         .map((answer, idx) => (
@@ -44,6 +45,7 @@ export default class QuestionBoard extends Component {
             key={ idx }
             type="button"
             disabled={ buttonState }
+            onClick={ () => selectAnswer(answer) }
           >
             { answer }
           </button>
@@ -105,4 +107,5 @@ QuestionBoard.propTypes = {
     incorrect_answers: PropTypes.arrayOf(PropTypes.string),
     question: PropTypes.string,
   }).isRequired,
+  selectAnswer: PropTypes.func.isRequired,
 };

@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Header from '../components/Header';
 import QuestionBoard from '../components/QuestionBoard';
 import fetchQuestions from '../services/fetchApi';
+import ButtonNext from '../components/ButtonNext';
 
 class Game extends Component {
   constructor() {
@@ -10,6 +11,7 @@ class Game extends Component {
     this.state = {
       questions: undefined,
       questionIdx: 0,
+      selectedAnswer: null,
     };
   }
 
@@ -35,15 +37,27 @@ class Game extends Component {
     }
   }
 
+  selectAnswer = (selectedAnswer) => this.setState({ selectedAnswer })
+
+  getNextQuestion = () => this.setState((prev) => ({ questionIdx: prev.questionIdx + 1 }))
+
   render() {
-    const { questions, questionIdx } = this.state;
+    const { questions, questionIdx, selectedAnswer } = this.state;
     return (
       <div>
         <Header />
         <main>
           Trivia
           {
-            questions && <QuestionBoard questionInfo={ questions.results[questionIdx] } />
+            questions && <QuestionBoard
+              questionInfo={ questions.results[questionIdx] }
+              selectAnswer={ this.selectAnswer }
+            />
+          }
+          {
+            selectedAnswer && <ButtonNext
+              getNextQuestion={ this.getNextQuestion }
+            />
           }
         </main>
       </div>
