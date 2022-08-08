@@ -4,12 +4,23 @@ import './QuestionBoard.css';
 
 let incorrectIdx = 0;
 export default class QuestionBoard extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = ({
+  constructor() {
+    super();
+    this.state = {
+      seconds: 30,
+      randomAnswers: [],
+      buttonState: false,
       borderEnable: false,
-    });
+    };
+  }
+
+  componentDidMount = () => {
+    const { questionInfo } = this.props;
+    const { correct_answer: correctAnswer } = questionInfo;
+    const answers = [...questionInfo.incorrect_answers, correctAnswer];
+    const randomAnswers = this.randomizeAnswers(answers);
+    this.setState({ randomAnswers });
+    this.countdown();
   }
 
   createTestId = (answer, correctAnswer) => {
@@ -32,34 +43,59 @@ export default class QuestionBoard extends Component {
     return `${border} ${colorBorder}`;
   }
 
-  createButtons = (answers, correctAnswer) => {
+  randomizeAnswers = (answers) => {
     const randomNumber = 0.5;
+    return answers.sort(() => Math.random() - randomNumber);
+  }
+
+  createButtons = (answers, correctAnswer) => {
+    const { buttonState } = this.state;
     const { selectAnswer } = this.props;
     return (
       answers
-        .sort(() => Math.random() - randomNumber)
-        .map((answer, idx) => {
-          const testId = this.createTestId(answer, correctAnswer);
-          return (
-            <button
-              data-testid={ testId }
-              key={ idx }
-              type="button"
-              className={ this.createClass(testId) }
-              name={ testId }
-              onClick={ this.activeBorder }
-            >
-              { answer }
-            </button>
-          );
-        })
+        .map((answer, idx) => (
+          <button
+            data-testid={ this.createTestId(answer, correctAnswer) }
+            key={ idx }
+            type="button"
+            className={ this.createClass(testId) }
+            disabled={ buttonState }
+            name={ testId }
+            onClick={ () => {
+              this.activeBorder();
+              selectAnswer(answer);
+            } }
+          >
+            { answer }
+          </button>
+        ))
     );
+  }
+
+  countdown = () => {
+    const oneSecondInMiliseconds = 1000;
+    const thirtySeconds = 30;
+    let count = thirtySeconds;
+    const interval = setInterval(() => {
+      count -= 1;
+      this.setState({ seconds: count }, () => {
+        const { seconds } = this.state;
+        if (seconds === 0) {
+          clearInterval(interval);
+          this.setState({ buttonState: true });
+        }
+      });
+    }, oneSecondInMiliseconds);
+  }
+
+  componentWillUnmount = () => {
+    clearInterval(this.countdown);
   }
 
   render() {
     const { questionInfo } = this.props;
     const { category, question, correct_answer: correctAnswer } = questionInfo;
-    const answers = [...questionInfo.incorrect_answers, correctAnswer];
+    const { seconds, randomAnswers } = this.state;
     return (
       <div>
         <h2
@@ -67,6 +103,7 @@ export default class QuestionBoard extends Component {
         >
           {category}
         </h2>
+        <p>{seconds}</p>
         <p
           data-testid="question-text"
         >
@@ -74,7 +111,7 @@ export default class QuestionBoard extends Component {
         </p>
         <div data-testid="answer-options">
           {
-            this.createButtons(answers, correctAnswer)
+            this.createButtons(randomAnswers, correctAnswer)
           }
         </div>
       </div>
