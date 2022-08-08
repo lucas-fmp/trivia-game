@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { MD5 } from 'crypto-js';
 import QuestionBoard from '../components/QuestionBoard';
 import fetchQuestions from '../services/fetchApi';
+import ButtonNext from '../components/ButtonNext';
 
 class Game extends Component {
   constructor() {
@@ -12,6 +13,7 @@ class Game extends Component {
       questions: undefined,
       questionIdx: 0,
       srcImage: '',
+      selectedAnswer: null,
     };
   }
 
@@ -46,10 +48,14 @@ class Game extends Component {
     this.setState({ srcImage: gravatarLink });
   }
 
+  selectAnswer = (selectedAnswer) => this.setState({ selectedAnswer })
+
+  getNextQuestion = () => this.setState((prev) => ({ questionIdx: prev.questionIdx + 1 }))
+
   render() {
     const { state } = this.props;
     const { player: { name, score } } = state;
-    const { srcImage, questions, questionIdx } = this.state;
+    const { srcImage, questions, questionIdx, selectedAnswer } = this.state;
     return (
       <div>
         <header>
@@ -57,12 +63,20 @@ class Game extends Component {
           <p data-testid="header-player-name">{name}</p>
           <p data-testid="header-score">{score}</p>
         </header>
-        <div>
+        <main>
           Trivia
           {
-            questions && <QuestionBoard questionInfo={ questions.results[questionIdx] } />
+            questions && <QuestionBoard
+              questionInfo={ questions.results[questionIdx] }
+              selectAnswer={ this.selectAnswer }
+            />
           }
-        </div>
+          {
+            selectedAnswer && <ButtonNext
+              getNextQuestion={ this.getNextQuestion }
+            />
+          }
+        </main>
       </div>
     );
   }

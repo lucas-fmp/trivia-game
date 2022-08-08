@@ -13,6 +13,7 @@ export default class QuestionBoard extends Component {
 
   createButtons = (answers, correctAnswer) => {
     const randomNumber = 0.5;
+    const { selectAnswer } = this.props;
     return (
       answers
         .sort(() => Math.random() - randomNumber)
@@ -21,6 +22,7 @@ export default class QuestionBoard extends Component {
             data-testid={ this.createTestId(answer, correctAnswer) }
             key={ idx }
             type="button"
+            onClick={ () => selectAnswer(answer) }
           >
             { answer }
           </button>
@@ -61,4 +63,5 @@ QuestionBoard.propTypes = {
     incorrect_answers: PropTypes.arrayOf(PropTypes.string),
     question: PropTypes.string,
   }).isRequired,
+  selectAnswer: PropTypes.func.isRequired,
 };
