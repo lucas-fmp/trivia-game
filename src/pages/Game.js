@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import QuestionBoard from '../components/QuestionBoard';
 import fetchQuestions from '../services/fetchApi';
+import { connect } from 'react-redux';
+import { MD5 } from 'crypto-js';
 
 class Game extends Component {
   constructor() {
@@ -9,11 +11,13 @@ class Game extends Component {
     this.state = {
       questions: undefined,
       questionIdx: 0,
+      srcImage: '',
     };
   }
 
   componentDidMount() {
     this.getQuestions();
+    this.setGravatarSRc();
   }
 
   getToken = () => localStorage.getItem('token');
@@ -34,15 +38,32 @@ class Game extends Component {
     }
   }
 
+  setGravatarSrc = () => {
+    const { state } = this.props;
+    const { player: { gravatarEmail } } = state;
+    const convertedEmail = MD5(gravatarEmail).toString();
+    const gravatarLink = `https://www.gravatar.com/avatar/${convertedEmail}`;
+    this.setState({ srcImage: gravatarLink });
+  }
+
   render() {
-    const { questions, questionIdx } = this.state;
+    const { state } = this.props;
+    const { player: { name, score } } = state;
+    const { srcImage, questions, questionIdx } = this.state;
     return (
+    <div>
+       <header>
+        <img data-testid="header-profile-picture" alt="profile" src={ srcImage } />
+        <p data-testid="header-player-name">{name}</p>
+        <p data-testid="header-score">{score}</p>
+      </header>
       <div>
         Trivia
         {
           questions && <QuestionBoard questionInfo={ questions.results[questionIdx] } />
         }
       </div>
+    </div>
     );
   }
 }
@@ -52,5 +73,9 @@ Game.propTypes = {
     push: PropTypes.func,
   }).isRequired,
 };
+  state: PropTypes.shape().isRequired,
+};
 
-export default Game;
+const mapStateToProps = (state) => ({ state });
+
+export default connect(mapStateToProps)(Game);

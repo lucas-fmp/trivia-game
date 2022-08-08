@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { fetchToken } from '../services/fetchApi';
+import { connect } from 'react-redux';
+import { login } from '../redux/actions';
 
 class Login extends Component {
   constructor() {
@@ -8,30 +10,37 @@ class Login extends Component {
     this.state = {
       name: '',
       email: '',
+      buttonState: true,
     };
   }
 
   handleChange = ({ target: { name, value } }) => {
-    this.setState({ [name]: value });
+    this.setState({ [name]: value }, this.validateLoginButton);
   }
 
   validateLoginButton = () => {
     const { name, email } = this.state;
     if (name.length > 0 && email.length > 0) {
-      return false;
+      this.setState({ buttonState: false });
+    } else {
+      this.setState({ buttonState: true });
     }
-    return true;
   }
 
-  saveToken = async () => {
+  redirect = () => {
     const { history } = this.props;
-    const token = await fetchToken();
-    localStorage.setItem('token', token.token);
     history.push('/game');
   }
 
+  saveToken = async () => {
+    const token = await fetchToken();
+    localStorage.setItem('token', token.token);
+    this.redirect();
+  }
+
   render() {
-    const { name, email } = this.state;
+    const { name, email, buttonState } = this.state;
+    const { login: loginAction } = this.props;
     return (
       <form>
         <input
@@ -53,8 +62,11 @@ class Login extends Component {
         <button
           type="button"
           data-testid="btn-play"
-          disabled={ this.validateLoginButton() }
-          onClick={ this.saveToken }
+          disabled={ buttonState }
+          onClick={ () => {
+            loginAction(this.state);
+            this.saveToken();
+          } }
         >
           Play
         </button>
@@ -67,6 +79,11 @@ Login.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
+  login: PropTypes.func.isRequired,
 };
 
-export default Login;
+const mapDispatchToProps = (dispatch) => ({
+  login: (state) => dispatch(login(state)),
+});
+
+export default connect(null, mapDispatchToProps)(Login);
