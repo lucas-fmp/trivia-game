@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { fetchToken } from '../services/fetchApi';
 import { login } from '../redux/actions';
 
 class Login extends Component {
@@ -31,6 +32,12 @@ class Login extends Component {
     history.push('/game');
   }
 
+  saveToken = async () => {
+    const token = await fetchToken();
+    localStorage.setItem('token', token.token);
+    this.redirect();
+  }
+
   render() {
     const { name, email, buttonState } = this.state;
     const { login: loginAction } = this.props;
@@ -58,7 +65,7 @@ class Login extends Component {
           disabled={ buttonState }
           onClick={ () => {
             loginAction(this.state);
-            this.redirect();
+            this.saveToken();
           } }
         >
           Play

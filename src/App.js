@@ -7,8 +7,8 @@ import Game from './pages/Game';
 export default function App() {
   return (
     <Switch>
-      <Route component={ Login } exact path="/" />
       <Route component={ Game } path="/game" />
+      <Route component={ Login } path="/" />
     </Switch>
   );
 }
