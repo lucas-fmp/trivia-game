@@ -34,6 +34,7 @@ export default class QuestionBoard extends Component {
 
   createButtons = (answers, correctAnswer) => {
     const randomNumber = 0.5;
+    const { selectAnswer } = this.props;
     return (
       answers
         .sort(() => Math.random() - randomNumber)
@@ -88,4 +89,5 @@ QuestionBoard.propTypes = {
     incorrect_answers: PropTypes.arrayOf(PropTypes.string),
     question: PropTypes.string,
   }).isRequired,
+  selectAnswer: PropTypes.func.isRequired,
 };
