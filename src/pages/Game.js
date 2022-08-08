@@ -17,7 +17,7 @@ class Game extends Component {
 
   componentDidMount() {
     this.getQuestions();
-    this.setGravatarSRc();
+    this.setGravatarSrc();
   }
 
   getToken = () => localStorage.getItem('token');
