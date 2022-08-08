@@ -7,7 +7,7 @@ export default class QuestionBoard extends Component {
   createTestId = (answer, correctAnswer) => {
     const testId = answer === correctAnswer
       ? 'correct-answer' : `wrong-answer-${incorrectIdx}`;
-    incorrectIdx = answer !== correctAnswer ? incorrectIdx += 1 : incorrectIdx;
+    incorrectIdx = answer !== correctAnswer ? incorrectIdx + 1 : incorrectIdx;
     return testId;
   }
 
