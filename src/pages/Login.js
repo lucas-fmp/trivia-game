@@ -1,4 +1,7 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { login } from '../redux/actions';
 
 class Login extends Component {
   constructor() {
@@ -6,23 +9,31 @@ class Login extends Component {
     this.state = {
       name: '',
       email: '',
+      buttonState: true,
     };
   }
 
   handleChange = ({ target: { name, value } }) => {
-    this.setState({ [name]: value });
+    this.setState({ [name]: value }, this.validateLoginButton);
   }
 
   validateLoginButton = () => {
     const { name, email } = this.state;
     if (name.length > 0 && email.length > 0) {
-      return false;
+      this.setState({ buttonState: false });
+    } else {
+      this.setState({ buttonState: true });
     }
-    return true;
+  }
+
+  redirect = () => {
+    const { history } = this.props;
+    history.push('/game');
   }
 
   render() {
-    const { name, email } = this.state;
+    const { name, email, buttonState } = this.state;
+    const { login: loginAction } = this.props;
     return (
       <form>
         <input
@@ -44,7 +55,11 @@ class Login extends Component {
         <button
           type="button"
           data-testid="btn-play"
-          disabled={ this.validateLoginButton() }
+          disabled={ buttonState }
+          onClick={ () => {
+            loginAction(this.state);
+            this.redirect();
+          } }
         >
           Play
         </button>
@@ -53,4 +68,15 @@ class Login extends Component {
   }
 }
 
-export default Login;
+Login.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
+  login: PropTypes.func.isRequired,
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  login: (state) => dispatch(login(state)),
+});
+
+export default connect(null, mapDispatchToProps)(Login);
