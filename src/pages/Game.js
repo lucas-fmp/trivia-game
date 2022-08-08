@@ -60,8 +60,8 @@ class Game extends Component {
       <div>
         <header>
           <img data-testid="header-profile-picture" alt="profile" src={ srcImage } />
-          <p data-testid="header-player-name">{name}</p>
-          <p data-testid="header-score">{score}</p>
+          <p data-testid="header-player-name">{ name }</p>
+          <p data-testid="header-score">{ score }</p>
         </header>
         <main>
           Trivia
