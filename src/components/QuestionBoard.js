@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import './QuestionBoard.css';
+
 let incorrectIdx = 0;
 export default class QuestionBoard extends Component {
   constructor(props) {
