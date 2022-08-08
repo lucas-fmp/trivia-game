@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { fetchToken } from '../services/fetchApi';
 import { connect } from 'react-redux';
+import { fetchToken } from '../services/fetchApi';
 import { login } from '../redux/actions';
 
 class Login extends Component {

@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import QuestionBoard from '../components/QuestionBoard';
-import fetchQuestions from '../services/fetchApi';
 import { connect } from 'react-redux';
 import { MD5 } from 'crypto-js';
+import QuestionBoard from '../components/QuestionBoard';
+import fetchQuestions from '../services/fetchApi';
 
 class Game extends Component {
   constructor() {
@@ -51,19 +51,19 @@ class Game extends Component {
     const { player: { name, score } } = state;
     const { srcImage, questions, questionIdx } = this.state;
     return (
-    <div>
-       <header>
-        <img data-testid="header-profile-picture" alt="profile" src={ srcImage } />
-        <p data-testid="header-player-name">{name}</p>
-        <p data-testid="header-score">{score}</p>
-      </header>
       <div>
-        Trivia
-        {
-          questions && <QuestionBoard questionInfo={ questions.results[questionIdx] } />
-        }
+        <header>
+          <img data-testid="header-profile-picture" alt="profile" src={ srcImage } />
+          <p data-testid="header-player-name">{name}</p>
+          <p data-testid="header-score">{score}</p>
+        </header>
+        <div>
+          Trivia
+          {
+            questions && <QuestionBoard questionInfo={ questions.results[questionIdx] } />
+          }
+        </div>
       </div>
-    </div>
     );
   }
 }
@@ -72,7 +72,6 @@ Game.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
-};
   state: PropTypes.shape().isRequired,
 };
 
