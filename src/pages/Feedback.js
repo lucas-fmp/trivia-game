@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
+import FeedbackBoard from '../components/FeedbackBoard';
+import FeedbackText from '../components/FeedbackText';
 
-class Feedback extends Component {
+export default class Feedback extends Component {
   render() {
     return (
       <div>
-        oi
+        Feedback
+        <FeedbackText />
+        <FeedbackBoard />
       </div>
     );
   }
 }
-
-export default Feedback;

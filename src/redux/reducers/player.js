@@ -1,4 +1,8 @@
-import { USER_LOGIN, INCREMENT_SCORE } from '../actions/actionTypes';
+import {
+  USER_LOGIN,
+  INCREMENT_SCORE,
+  INCREMENT_ASSERTIONS,
+} from '../actions/actionTypes';
 
 const INITIAL_STATE = {
   name: '',
@@ -16,9 +20,16 @@ const player = (state = INITIAL_STATE, action) => {
       gravatarEmail: action.state.email,
     });
   case INCREMENT_SCORE:
+    console.log(state);
     return ({
       ...state,
       score: state.score + action.score,
+    });
+  case INCREMENT_ASSERTIONS:
+    console.log(state);
+    return ({
+      ...state,
+      assertions: state.assertions + 1,
     });
   default:
     return state;

@@ -43,7 +43,6 @@ class Game extends Component {
     const { questionIdx } = this.state;
     const { history } = this.props;
     const questionsLength = 4;
-    console.log(questionIdx, questionsLength);
     if (questionIdx === questionsLength) {
       history.push('/feedback');
     }

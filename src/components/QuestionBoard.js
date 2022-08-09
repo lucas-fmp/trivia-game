@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { incrementScore } from '../redux/actions';
+import { incrementAssertions, incrementScore } from '../redux/actions';
 import './QuestionBoard.css';
 
 let incorrectIdx = 0;
@@ -65,7 +65,7 @@ class QuestionBoard extends Component {
   }
 
   incrementScore = (questionInfo, seconds) => {
-    const { setScore } = this.props;
+    const { setScore, setAssertions } = this.props;
     let score = 0;
     const minimumPoints = 10;
     const easy = 1;
@@ -82,6 +82,7 @@ class QuestionBoard extends Component {
       score = minimumPoints + (seconds * hard);
     }
     setScore(score);
+    setAssertions();
   }
 
   verifyAnswer = (answer) => {
@@ -176,10 +177,12 @@ QuestionBoard.propTypes = {
   }).isRequired,
   selectAnswer: PropTypes.func.isRequired,
   setScore: PropTypes.func.isRequired,
+  setAssertions: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => ({
   setScore: (score) => dispatch(incrementScore(score)),
+  setAssertions: () => dispatch(incrementAssertions()),
 });
 
 export default connect(null, mapDispatchToProps)(QuestionBoard);
