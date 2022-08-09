@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import './QuestionBoard.css';
 
 let incorrectIdx = 0;
-
 export default class QuestionBoard extends Component {
   constructor() {
     super();
@@ -10,6 +10,7 @@ export default class QuestionBoard extends Component {
       seconds: 30,
       randomAnswers: [],
       buttonState: false,
+      borderEnable: false,
     };
   }
 
@@ -29,6 +30,19 @@ export default class QuestionBoard extends Component {
     return testId;
   }
 
+  activeBorder = () => {
+    this.setState({
+      borderEnable: true,
+    });
+  }
+
+  createClass = (testId) => {
+    const { borderEnable } = this.state;
+    const border = borderEnable ? 'border' : '';
+    const colorBorder = testId === 'correct-answer' ? 'colorGreen' : 'colorRed';
+    return `${border} ${colorBorder}`;
+  }
+
   randomizeAnswers = (answers) => {
     const randomNumber = 0.5;
     return answers.sort(() => Math.random() - randomNumber);
@@ -39,17 +53,25 @@ export default class QuestionBoard extends Component {
     const { selectAnswer } = this.props;
     return (
       answers
-        .map((answer, idx) => (
-          <button
-            data-testid={ this.createTestId(answer, correctAnswer) }
-            key={ idx }
-            type="button"
-            disabled={ buttonState }
-            onClick={ () => selectAnswer(answer) }
-          >
-            { answer }
-          </button>
-        ))
+        .map((answer, idx) => {
+          const testId = this.createTestId(answer, correctAnswer);
+          return (
+            <button
+              data-testid={ testId }
+              key={ idx }
+              type="button"
+              className={ this.createClass(testId) }
+              disabled={ buttonState }
+              name={ testId }
+              onClick={ () => {
+                this.activeBorder();
+                selectAnswer(answer);
+              } }
+            >
+              { answer }
+            </button>
+          );
+        })
     );
   }
 
