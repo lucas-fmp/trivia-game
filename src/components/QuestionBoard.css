@@ -1,11 +1,11 @@
 .colorGreen {
-    border: 0px solid rgb(6, 240, 15);
+  border: 0 solid rgb(6, 240, 15);
 }
 
 .colorRed {
-    border: 0px solid red;
+  border: 0 solid red;
 }
 
 .border {
-    border-width: 3px;
+  border-width: 3px;
 }
