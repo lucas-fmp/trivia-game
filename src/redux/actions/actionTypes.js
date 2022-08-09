@@ -1,3 +1,3 @@
 export const USER_LOGIN = 'USER_LOGIN';
 
-export const placeholder = '';
+export const INCREMENT_SCORE = 'INCREMENT_SCORE';

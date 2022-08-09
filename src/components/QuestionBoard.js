@@ -1,26 +1,38 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { incrementScore } from '../redux/actions';
 import './QuestionBoard.css';
 
 let incorrectIdx = 0;
-export default class QuestionBoard extends Component {
+class QuestionBoard extends Component {
   constructor() {
     super();
     this.state = {
       seconds: 30,
       randomAnswers: [],
+      question: '',
       buttonState: false,
       borderEnable: false,
     };
   }
 
   componentDidMount = () => {
-    const { questionInfo } = this.props;
-    const { correct_answer: correctAnswer } = questionInfo;
-    const answers = [...questionInfo.incorrect_answers, correctAnswer];
-    const randomAnswers = this.randomizeAnswers(answers);
-    this.setState({ randomAnswers });
     this.countdown();
+    this.randomizeAnswers();
+  }
+
+  countdownReset = (questionInfo) => {
+    this.setState({ seconds: 30, question: questionInfo.question });
+  }
+
+  componentDidUpdate = () => {
+    const { question } = this.state;
+    const { questionInfo } = this.props;
+    if (question !== questionInfo.question) {
+      this.countdownReset(questionInfo);
+      this.randomizeAnswers();
+    }
   }
 
   createTestId = (answer, correctAnswer) => {
@@ -43,9 +55,42 @@ export default class QuestionBoard extends Component {
     return `${border} ${colorBorder}`;
   }
 
-  randomizeAnswers = (answers) => {
+  randomizeAnswers = () => {
     const randomNumber = 0.5;
-    return answers.sort(() => Math.random() - randomNumber);
+    const { questionInfo } = this.props;
+    const { correct_answer: correctAnswer } = questionInfo;
+    const answers = [...questionInfo.incorrect_answers, correctAnswer];
+    const randomAnswers = answers.sort(() => Math.random() - randomNumber);
+    this.setState({ randomAnswers, question: questionInfo.question });
+  }
+
+  incrementScore = (questionInfo, seconds) => {
+    const { setScore } = this.props;
+    let score = 0;
+    const minimumPoints = 10;
+    const easy = 1;
+    const medium = 2;
+    const hard = 3;
+    const { difficulty } = questionInfo;
+    if (difficulty === 'easy') {
+      score = minimumPoints + (seconds * easy);
+    }
+    if (difficulty === 'medium') {
+      score = minimumPoints + (seconds * medium);
+    }
+    if (difficulty === 'hard') {
+      score = minimumPoints + (seconds * hard);
+    }
+    setScore(score);
+  }
+
+  verifyAnswer = (answer) => {
+    const { questionInfo } = this.props;
+    const { correct_answer: correctAnswer } = questionInfo;
+    if (correctAnswer === answer) {
+      const { seconds } = this.state;
+      this.incrementScore(questionInfo, seconds);
+    }
   }
 
   createButtons = (answers, correctAnswer) => {
@@ -66,6 +111,7 @@ export default class QuestionBoard extends Component {
               onClick={ () => {
                 this.activeBorder();
                 selectAnswer(answer);
+                this.verifyAnswer(answer);
               } }
             >
               { answer }
@@ -77,13 +123,12 @@ export default class QuestionBoard extends Component {
 
   countdown = () => {
     const oneSecondInMiliseconds = 1000;
-    const thirtySeconds = 30;
-    let count = thirtySeconds;
     const interval = setInterval(() => {
+      const { seconds } = this.state;
+      let count = seconds;
       count -= 1;
       this.setState({ seconds: count }, () => {
-        const { seconds } = this.state;
-        if (seconds === 0) {
+        if (seconds === 1) {
           clearInterval(interval);
           this.setState({ buttonState: true });
         }
@@ -130,4 +175,11 @@ QuestionBoard.propTypes = {
     question: PropTypes.string,
   }).isRequired,
   selectAnswer: PropTypes.func.isRequired,
+  setScore: PropTypes.func.isRequired,
 };
+
+const mapDispatchToProps = (dispatch) => ({
+  setScore: (score) => dispatch(incrementScore(score)),
+});
+
+export default connect(null, mapDispatchToProps)(QuestionBoard);
