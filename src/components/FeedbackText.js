@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 class FeedbackText extends Component {
   render() {
-    const { score } = this.props;
+    const { assertions } = this.props;
     const limit = 3;
     return (
       <div>
@@ -12,7 +12,7 @@ class FeedbackText extends Component {
           data-testid="feedback-text"
         >
           {
-            score < limit ? 'Could be better...' : 'Well Done!'
+            assertions < limit ? 'Could be better...' : 'Well Done!'
           }
         </p>
       </div>
@@ -21,11 +21,11 @@ class FeedbackText extends Component {
 }
 
 FeedbackText.propTypes = {
-  score: PropTypes.number.isRequired,
+  assertions: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = (state) => ({
-  playerInfo: state.player.score,
+  assertions: state.player.assertions,
 });
 
 export default connect(mapStateToProps, null)(FeedbackText);

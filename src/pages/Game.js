@@ -39,7 +39,15 @@ class Game extends Component {
 
   selectAnswer = (selectedAnswer) => this.setState({ selectedAnswer })
 
-  getNextQuestion = () => this.setState((prev) => ({ questionIdx: prev.questionIdx + 1 }))
+  getNextQuestion = () => {
+    const { questionIdx } = this.state;
+    const { history } = this.props;
+    const questionsLength = 4;
+    if (questionIdx === questionsLength) {
+      history.push('/feedback');
+    }
+    this.setState((prev) => ({ questionIdx: prev.questionIdx + 1 }));
+  }
 
   render() {
     const { questions, questionIdx, selectedAnswer } = this.state;
