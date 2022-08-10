@@ -18,7 +18,6 @@ class Feedback extends Component {
 
   componentDidMount = async () => {
     const { logindata } = this.props;
-    console.log(logindata);
     const { gravatarEmail } = logindata;
     const convertedEmail = md5(gravatarEmail).toString();
     const gravatarLink = `https://www.gravatar.com/avatar/${convertedEmail}`;
