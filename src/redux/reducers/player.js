@@ -20,13 +20,11 @@ const player = (state = INITIAL_STATE, action) => {
       gravatarEmail: action.state.email,
     });
   case INCREMENT_SCORE:
-    console.log(state);
     return ({
       ...state,
       score: state.score + action.score,
     });
   case INCREMENT_ASSERTIONS:
-    console.log(state);
     return ({
       ...state,
       assertions: state.assertions + 1,

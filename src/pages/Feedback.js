@@ -29,6 +29,16 @@ class Feedback extends Component {
     });
   }
 
+  redirectToRanking = () => {
+    const { history } = this.props;
+    history.push('/ranking');
+  }
+
+  redirectToHome = () => {
+    const { history } = this.props;
+    history.push('/');
+  }
+
   render() {
     const { url, name, score } = this.state;
     return (
@@ -40,12 +50,29 @@ class Feedback extends Component {
         </header>
         <FeedbackText />
         <FeedbackBoard />
+        <button
+          type="button"
+          data-testid="btn-play-again"
+          onClick={ this.redirectToHome }
+        >
+          Jogar Novamente
+        </button>
+        <button
+          data-testid="btn-ranking"
+          type="button"
+          onClick={ this.redirectToRanking }
+        >
+          Ranking
+        </button>
       </div>
     );
   }
 }
 
 Feedback.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
   logindata: PropTypes.shape({
     gravatarEmail: PropTypes.string,
     name: PropTypes.string,
