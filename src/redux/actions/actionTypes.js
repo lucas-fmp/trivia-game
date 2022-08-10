@@ -3,3 +3,5 @@ export const USER_LOGIN = 'USER_LOGIN';
 export const INCREMENT_SCORE = 'INCREMENT_SCORE';
 
 export const INCREMENT_ASSERTIONS = 'INCREMENT_ASSERTIONS';
+
+export const USER_TOKEN = 'USER_TOKEN';
