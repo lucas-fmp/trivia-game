@@ -5,19 +5,11 @@ import md5 from 'crypto-js/md5';
 
 class Ranking extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = ({
-      picture: '',
-      name: '',
-      score: null,
       ranking: [],
-    })
-  }
-
-  redirectToHome = () => {
-    const { history } = this.props;
-    history.push('/');
+    });
   }
 
   componentDidMount() {
@@ -29,24 +21,28 @@ class Ranking extends Component {
       picture: gravatarLink,
       name: logindata.name,
       score: logindata.score,
-    }
+    };
     this.saveLocalStorage(pessoa);
   }
 
-  saveLocalStorage = async (pessoa) => {
-    let rankingValue = localStorage.getItem('ranking')
-    let rankingObject = JSON.parse(rankingValue)
-    let ranking = [pessoa]
-    if(rankingValue){
-      ranking = [...rankingObject, pessoa]
-    }
-    this.setState({ ranking })
-    localStorage.setItem('ranking', JSON.stringify(ranking))
+  redirectToHome = () => {
+    const { history } = this.props;
+    history.push('/');
   }
 
-  
+  saveLocalStorage = async (pessoa) => {
+    const rankingValue = localStorage.getItem('ranking');
+    const rankingObject = JSON.parse(rankingValue);
+    let ranking = [pessoa];
+    if (rankingValue) {
+      ranking = [...rankingObject, pessoa];
+    }
+    this.setState({ ranking });
+    localStorage.setItem('ranking', JSON.stringify(ranking));
+  }
+
   render() {
-    let { ranking } = this.state
+    const { ranking } = this.state;
     return (
       <div>
         <h1 data-testid="ranking-title">
@@ -63,14 +59,14 @@ class Ranking extends Component {
           <ul>
             {
               [...ranking].sort((a, b) => b.score - a.score).map((user, index) => {
-                console.log(index)
+                console.log(index);
                 return (
-                  <li key={index}>
-                    <img alt='button-power' src={user.picture}/>
-                    <p data-testid={`player-name-${index}`}>{user.name}</p>
-                    <p data-testid={`player-score-${index}`}>{user.score}</p>
+                  <li key={ index }>
+                    <img alt="button-power" src={ user.picture } />
+                    <p data-testid={ `player-name-${index}` }>{user.name}</p>
+                    <p data-testid={ `player-score-${index}` }>{user.score}</p>
                   </li>
-                )
+                );
               })
             }
           </ul>
@@ -83,6 +79,11 @@ class Ranking extends Component {
 Ranking.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
+  }).isRequired,
+  logindata: PropTypes.shape({
+    gravatarEmail: PropTypes.string,
+    name: PropTypes.string,
+    score: PropTypes.number,
   }).isRequired,
 };
 
