@@ -57,4 +57,23 @@ describe('The Feedback page', () => {
     userEvent.click(rankingBtn);
     expect(history.location.pathname).toBe('/ranking');
   });
+
+  it('contain the feedback text', () => {
+    const MockedPlayer = {
+      player: {
+        name: 'user',
+        assertions: 3,
+        score: 0,
+        gravatarEmail: 'user@user.com',
+      }
+    };
+    
+    const path = '/feedback';
+    renderWithRouterAndRedux(<App />, MockedPlayer, path);
+
+    const feedbackText = screen.getByTestId('feedback-text');
+    const textContent = 'Well Done!';
+    expect(feedbackText).toBeInTheDocument();
+    expect(feedbackText).toHaveTextContent(textContent);
+  });
 });

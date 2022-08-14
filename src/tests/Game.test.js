@@ -1,44 +1,114 @@
 import React from "react";
-import { screen } from '@testing-library/react'
-import App from "../App";
+import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import renderWithRouterAndRedux from "./helpers/renderWithRouterAndRedux";
-import userEvent from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event';
+import { invalidTokenQuestionsResponse, questionsResponse } from '../../cypress/mocks/questions';
+import App from "../App";
+
+const MockedPlayer = {
+  player: {
+    name: 'user',
+    assertions: 0,
+    score: 0,
+    gravatarEmail: 'user@user.com',
+  }
+};
+const path = '/game';
 
 describe('The Game page', () => {
-    it('contain the Header fields', async () => {
-      renderWithRouterAndRedux(<App />);
-      const inputName = screen.getByTestId('input-player-name');
-      const inputEmail = screen.getByTestId('input-gravatar-email');
-      const playButton = screen.getByTestId('btn-play');
-      userEvent.type(inputName, 'lucas');
-      userEvent.type(inputEmail, 'lucas@gmail.com');
-      userEvent.click(playButton);
-      const score = await screen.findByTestId('header-score');
-      expect(score).toBeInTheDocument();
-    })
+  
+  afterEach(() => jest.clearAllMocks());
 
-    it('contain a next question button', async () => {
-      renderWithRouterAndRedux(<App />);
-      const inputName = screen.getByTestId('input-player-name');
-      const inputEmail = screen.getByTestId('input-gravatar-email');
-      const playButton = screen.getByTestId('btn-play');
-      userEvent.type(inputName, 'lucas');
-      userEvent.type(inputEmail, 'lucas@gmail.com');
-      userEvent.click(playButton);
+  it('contain the Header fields', () => {
+    renderWithRouterAndRedux(<App />, MockedPlayer, path);
 
-      const correctAnswer = await screen.findByTestId('correct-answer');
-      expect(correctAnswer).toBeInTheDocument();
-      userEvent.click(correctAnswer);
+    const score = screen.getByTestId('header-score');
+    expect(score).toBeInTheDocument();
+  });
 
-      const nextBtn = screen.getByTestId('btn-next');
-      expect(nextBtn).toBeInTheDocument();
-      userEvent.click(nextBtn);
-      userEvent.click(nextBtn);
-      userEvent.click(nextBtn);
-      userEvent.click(nextBtn);
-      userEvent.click(nextBtn);
+  it('contain the next question button', async () => {
 
-      const headerScore = screen.getByTestId('header-score');
-      expect(headerScore).toBeInTheDocument();
-    })
+    global.fetch = jest.fn(() => Promise.resolve({
+      json: () => Promise.resolve(questionsResponse),
+    }));
+
+    const { history } = renderWithRouterAndRedux(<App />, MockedPlayer, path);
+
+    const firstQuestion = await screen.findByTestId('question-text');
+    expect(firstQuestion).toHaveTextContent('The Republic of Malta is the smallest microstate worldwide.');
+
+    const correctAnswer = screen.getByTestId('correct-answer');
+    expect(correctAnswer).toBeInTheDocument();
+
+    userEvent.click(correctAnswer);
+
+    const buttonNext = screen.getByTestId('btn-next');
+    expect(buttonNext).toBeInTheDocument();
+    
+    const countdown = screen.getByTestId('countdown');
+    userEvent.click(buttonNext);
+    expect(countdown).toHaveTextContent(30);
+
+    const category = screen.getByTestId('question-category');
+    expect(category).toBeInTheDocument();
+
+    userEvent.click(buttonNext);
+    userEvent.click(buttonNext);
+    userEvent.click(buttonNext);
+    userEvent.click(buttonNext);
+    expect(history.location.pathname).toBe('/feedback');
+  });
+
+  it('should test if the answers are disabled', async () => {
+    jest.useFakeTimers();
+    global.fetch = jest.fn(() => Promise.resolve({
+      json: () => Promise.resolve(questionsResponse),
+    }));
+
+    renderWithRouterAndRedux(<App />, MockedPlayer, path);
+    const correctAnswer = await screen.findByTestId('correct-answer');
+
+    jest.advanceTimersByTime(30000);
+
+    expect(correctAnswer).toHaveProperty('disabled', true);
+
+    jest.useRealTimers();
+  });
+
+  it('redirect to the Login page if the fetch fail', async () => {
+    global.fetch = jest.fn(() => Promise.resolve({
+      json: () => Promise.resolve(invalidTokenQuestionsResponse),
+    }));
+
+    const { history } = renderWithRouterAndRedux(<App />, MockedPlayer, path);
+    await waitForElementToBeRemoved(() => screen.getByTestId('header-score'))
+
+    expect(history.location.pathname).toBe('/');
+  });
+
+  it('should test if the score is correct', async () => {
+    global.fetch = jest.fn(() => Promise.resolve({
+      json: () => Promise.resolve({ ...questionsResponse, results: questionsResponse.results.filter(({ difficulty }) => difficulty === "hard")}),
+    }));
+
+    renderWithRouterAndRedux(<App />, MockedPlayer, path);
+    const correctAnswer = await screen.findByTestId('correct-answer');
+    userEvent.click(correctAnswer);
+    const buttonNext = screen.getByTestId('btn-next');
+    userEvent.click(buttonNext);
+    const score = screen.getByTestId("header-score");
+    expect(score).toHaveTextContent('100');
+  });
+
+  it('should test if the score is correct', async () => {
+    global.fetch = jest.fn(() => Promise.resolve({
+      json: () => Promise.resolve({ ...questionsResponse, results: questionsResponse.results.filter(({ difficulty }) => difficulty === "medium")}),
+    }));
+
+    renderWithRouterAndRedux(<App />, MockedPlayer, path);
+    const correctAnswer = await screen.findByTestId('correct-answer');
+    userEvent.click(correctAnswer);
+    const score = screen.getByTestId("header-score");
+    expect(score).toHaveTextContent('70');
+  });
 })

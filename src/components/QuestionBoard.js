@@ -152,7 +152,7 @@ class QuestionBoard extends Component {
         >
           {category}
         </h2>
-        <p>{seconds}</p>
+        <p data-testid="countdown">{seconds}</p>
         <p
           data-testid="question-text"
         >
