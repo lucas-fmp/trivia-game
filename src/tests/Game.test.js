@@ -88,7 +88,7 @@ describe('The Game page', () => {
 
   it('should test if the score is correct', async () => {
     global.fetch = jest.fn(() => Promise.resolve({
-      json: () => Promise.resolve({ ...questionsResponse, results: questionsResponse.results.filter(({ category }) => category !== "Geography")}),
+      json: () => Promise.resolve({ ...questionsResponse, results: questionsResponse.results.filter(({ difficulty }) => difficulty === "hard")}),
     }));
 
     renderWithRouterAndRedux(<App />, MockedPlayer, path);
@@ -98,5 +98,17 @@ describe('The Game page', () => {
     userEvent.click(buttonNext);
     const score = screen.getByTestId("header-score");
     expect(score).toHaveTextContent('100');
+  });
+
+  it('should test if the score is correct', async () => {
+    global.fetch = jest.fn(() => Promise.resolve({
+      json: () => Promise.resolve({ ...questionsResponse, results: questionsResponse.results.filter(({ difficulty }) => difficulty === "medium")}),
+    }));
+
+    renderWithRouterAndRedux(<App />, MockedPlayer, path);
+    const correctAnswer = await screen.findByTestId('correct-answer');
+    userEvent.click(correctAnswer);
+    const score = screen.getByTestId("header-score");
+    expect(score).toHaveTextContent('70');
   });
 })
