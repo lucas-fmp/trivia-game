@@ -58,16 +58,13 @@ class Ranking extends Component {
         <div>
           <ul>
             {
-              [...ranking].sort((a, b) => b.score - a.score).map((user, index) => {
-                console.log(index);
-                return (
-                  <li key={ index }>
-                    <img alt="button-power" src={ user.picture } />
-                    <p data-testid={ `player-name-${index}` }>{user.name}</p>
-                    <p data-testid={ `player-score-${index}` }>{user.score}</p>
-                  </li>
-                );
-              })
+              [...ranking].sort((a, b) => b.score - a.score).map((user, index) => (
+                <li key={ index }>
+                  <img alt="button-power" src={ user.picture } />
+                  <p data-testid={ `player-name-${index}` }>{user.name}</p>
+                  <p data-testid={ `player-score-${index}` }>{user.score}</p>
+                </li>
+              ))
             }
           </ul>
         </div>
