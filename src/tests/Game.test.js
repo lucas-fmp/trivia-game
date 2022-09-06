@@ -2,7 +2,7 @@ import React from "react";
 import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import renderWithRouterAndRedux from "./helpers/renderWithRouterAndRedux";
 import userEvent from '@testing-library/user-event';
-import { invalidTokenQuestionsResponse, questionsResponse } from '../../cypress/mocks/questions';
+import { invalidTokenQuestionsResponse, questionsResponse } from '../../mocks/questions';
 import App from "../App";
 
 const MockedPlayer = {
